@@ -1,9 +1,11 @@
 library(AMORE)
+library(vegan)
 metadata <- read.csv("C:/Users/Robin.DESKTOP-0U5O684/Desktop/data.csv", header=T, row.names=1)
 results<-metadata[,1]#第1列划分出来作为学习结果
 results<-as.matrix(results)
 features<-metadata[,2:37]#第2到38列为特征
-p0<-decostand(features,'range') #apply(dat, 2, function (x) (max(x)-x)/(max(x)-min(x)))#将特征进行极差(0-1)标准化
+features<-features+1
+p0<-decostand(features,'range') #apply(date, 2, function (x) (max(x)-x)/(max(x)-min(x)))#将特征进行极差(0-1)标准化
 t<-results[1:33,]#前33行特征的目标结果
 t34<-results[34,]#第34行特征的目标结果
 t3550<-results[35:50,]#36到50行的目标结果
@@ -12,8 +14,7 @@ alter=1
 count=0
 
 #训练的结果测试第9行若误差在3%之内或者循环20次结束
-while(abs(alter)>0.03 && count<100){
-  
+while(abs(alter)>0.03 && count<20){
   #训练网络，n.neurons表示输入的参数，以及隐藏层个数，及输出结果
   net<-newff(n.neurons = c(37,37,2,1),learning.rate.global=1e-4, momentum.global=0.05,error.criterium="LMS", Stao=NA, hidden.layer="tansig", output.layer="purelin", method="ADAPTgdwm")
   #<span style="line-height: 27.2px; font-family: 'Helvetica Neue', Helvetica, Tahoma, Arial, STXihei, 'Microsoft YaHei', 微软雅黑, sans-serif;">p0[1:8,]表示输入，t0[1:8]表示输出，show.step表示循环次数，n.shows表示满足结果的报告次数</span>
@@ -45,6 +46,8 @@ t34<-as.matrix(t34)
 test<-cbind(y,t34)
 colnames(test)<-c("pred","real")
 test<-as.data.frame(test)
+library(ggplot2)
+library(ggpubr)
 ggplot(test, aes(x = pred, y =real)) +                     
   geom_point()
 ggplot(data=test, aes(x=pred, y=real))+geom_point(color="red")+stat_smooth(method="lm",se=FALSE)+stat_cor(data=test, method = "pearson")

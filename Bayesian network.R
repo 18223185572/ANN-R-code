@@ -1,9 +1,10 @@
 #加载数据
-data <- read.csv("C:/Users/Robin.DESKTOP-0U5O684/Desktop/data.csv", header=T, row.names=1)
+data <- read.csv("C:/Users/Robin.DESKTOP-0U5O684/Desktop/data/ARGmicro0905.csv", header=T, row.names=1)
 # 加载包
 library(vegan)
 #极差(0-1)标准化
 data1<-decostand(data,'range')#apply(data1, 2, function (x) (max(x)-x)/(max(x)-min(x)))
+data1<-as.data.frame(data1)
 # 加载包
 library(bnlearn)
 # 数据离散化
